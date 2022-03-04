@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         uwp和suwp的页面小工具
+// @name         MC方便B端系统发版的快捷小工具
 // @namespace    http://tampermonkey.net/
-// @version      0.2.1
-// @description  用于批量打开uwp和suwp的jenkins与gitlab
+// @version      0.2.2
+// @description  支持批量打开uwp和suwp子系统的jenkins与gitlab, 也支持空格批量打开多个单系统dap scm...的jenkins/gitlab
 // @author       mrzou
 // @match        https://bl-sc-pms-t-1.digi800.com/#/index
 // @icon         https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
@@ -24,12 +24,12 @@
         var style = `
               <style>
                   .monkey-plugin-warp{
-                    width: 200px;height: auto;background: rgba(0,0,0,0.3);
+                    width: 240px;height: auto;background: rgba(0,0,0,0.3);
                     font-size: 12px;color: #333;text-align: center;position: fixed;
                     top: 10%;right: 10%;marin: 0;padding: 0;user-select: none;transition: all 0.3s;
                   }
                   .monkey-plugin-tips{
-                    color: green;text-align:left;display:block;text-indent: 12px;
+                    color: green;text-align:left;display:block;
                   }
                   .monkey-plugin-warp.close{
                     top: 0;right: 0;width: 0;height: 0;
@@ -64,8 +64,8 @@
           }">
           ${isHide ? "open" : "X"}  
           </span>
-          <i class="monkey-plugin-tips">输入suwp/uwp时为批量操作</i>
-          <input class="monkey-plugin-input" placeholder="suwp/uwp(默认)/单个系统名" />
+          <i class="monkey-plugin-tips">suwp-a/uwp-a为子系统批量操作<br/>支持空格批量dap scm...</i>
+          <input class="monkey-plugin-input" placeholder="suwp-a/uwp-a(默认)/单(多)个系统名" />
           <ul>
             <button val="test">测试jenkins</button>
             <button val="prod">正式jenkins</button>
@@ -126,10 +126,10 @@
         }
         var isGitlab = $(target).attr("val").includes("gitlab")
         switch (type) {
-          case "uwp":
+          case "uwp-a":
             isGitlab ? gitLab(uwpSystems) : jenkins(uwpSystems)
             break
-          case "suwp":
+          case "suwp-a":
             isGitlab ? gitLab(suwpSystems) : jenkins(suwpSystems)
             break
           case "scm":
@@ -150,7 +150,7 @@
       }
       $("body").append(getHtml())
       $(".monkey-plugin-warp ul button").on("click", function () {
-        var inputs = ($(".monkey-plugin-input").val() || "uwp")
+        var inputs = ($(".monkey-plugin-input").val() || "uwp-a")
           .trim()
           .toLocaleLowerCase()
           .split(" ")
