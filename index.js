@@ -13,6 +13,7 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js
 // @license MIT
 // @grant        none
+// @updateURL   https://github.com/zoujian3820/project-publish-tool/blob/main/index.js
 // ==/UserScript==
 
 ;(function () {
