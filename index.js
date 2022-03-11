@@ -26,7 +26,7 @@
               <style>
                   .monkey-plugin-warp{
                     width: 240px;height: auto;background: rgba(0,0,0,0.3);
-                    font-size: 12px;color: #333;text-align: center;position: fixed;
+                    font-size: 12px;color: #333;text-align: center;position: fixed;z-index: 9999999999;
                     top: 10%;right: 10%;marin: 0;padding: 0;user-select: none;transition: all 0.3s;
                   }
                   .monkey-plugin-tips{
