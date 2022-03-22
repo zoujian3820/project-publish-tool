@@ -65,7 +65,13 @@
           }">
           ${isHide ? "open" : "X"}  
           </span>
-          <i class="monkey-plugin-tips">suwp-a/uwp-a为子系统批量操作<br/>支持空格批量dap scm...</i>
+          <i class="monkey-plugin-tips">
+            suwp-a/uwp-a为子系统批量操作<br/>支持空格批量<br/>dap scm riven-pc riven-m...
+            <i 
+              style="font-size: 20px;font-weight: bold;color:red;"
+              title="riven-pc riven-m suwp-a uwp-a uwp suwp scm dap plm dms pms dms qms mms splm mps smms"
+            >?</i>
+          </i>
           <input class="monkey-plugin-input" placeholder="suwp-a/uwp-a(默认)/单(多)个系统名" />
           <ul>
             <button val="test">测试jenkins</button>
@@ -142,6 +148,26 @@
               ? "https://j.opsfun.com/job/BL-SCM-web-qa-prod.dev/build?delay=0sec"
               : "https://j.opsfun.com/view/BL-SCM/job/BL-SCM-web-new-test.dev/build?delay=0sec"
             window.open(isGitlab ? gitlabUrl : jenkinUrl)
+            break
+          case "riven-pc":
+            // blushmark PC端商城专门处理
+            const gitlabUrlPc =
+              "https://git.opsfun.com/blushmark-front/riven-blush-mark/compare/develop...develop"
+            const prodPc = $(target).attr("val").includes("prod")
+            const jenkinUrlPc = prodPc
+              ? "https://j.opsfun.com/view/BL-PC/job/BL-PC-Switch-qa-prod.dev/build?delay=0sec"
+              : "https://j.opsfun.com/view/BM-FT/job/BL-riven-pc-test.dev/build?delay=0sec"
+            window.open(isGitlab ? gitlabUrlPc : jenkinUrlPc)
+            break
+          case "riven-m":
+            // blushmark 手机端商城专门处理
+            const gitlabUrlM =
+              "https://git.opsfun.com/blushmark-front/riven-blush-mark/compare/develop...develop"
+            const prodM = $(target).attr("val").includes("prod")
+            const jenkinUrlM = prodM
+              ? "https://j.opsfun.com/view/BL-M/job/BL-M-Switch-qa-prod.dev/build?delay=0sec"
+              : "https://j.opsfun.com/view/BM-FT/job/BL-riven-m-test.dev/build?delay=0sec"
+            window.open(isGitlab ? gitlabUrlM : jenkinUrlM)
             break
           default:
             const Sys = [...uwpSystems, ...suwpSystems]
