@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MC方便B端系统发版的快捷小工具
 // @namespace    http://tampermonkey.net/
-// @version      0.2.6
+// @version      0.2.7
 // @description  支持批量打开uwp和suwp子系统的jenkins与gitlab, 也支持空格批量打开多个单系统dap scm...的jenkins/gitlab
 // @author       mrzou
 // @match        https://bl-sc-pms-t-1.digi800.com/#/index
@@ -26,7 +26,7 @@
               <style>
                   .monkey-plugin-warp{
                     width: 240px;height: auto;background: rgba(0,0,0,0.3);
-                    font-size: 12px;color: #333;text-align: center;position: fixed;z-index: 9999999999;
+                    font-size: 14px;color: #333;text-align: center;position: fixed;z-index: 9999999999;
                     top: 10%;right: 10%;marin: 0;padding: 0;user-select: none;transition: all 0.3s;
                   }
                   .monkey-plugin-tips{
@@ -53,7 +53,7 @@
                     border: 1px solid red;color: red;cursor: pointer;
                   }
                   .monkey-plugin-entry{
-                    top: 0;right: 0;width: 45px;line-height: 16px;height: 16px;
+                    top: 0;right: 0;width: 14px;height: 14px;display:flex;align-items:center;justify-content: center;
                   }
               </style>
               `
@@ -63,18 +63,19 @@
           <span class="monkey-plugin-close ${
             isHide ? "monkey-plugin-entry" : ""
           }">
-          ${isHide ? "open" : "X"}  
+          ${isHide ? "o" : "X"}  
           </span>
           <i class="monkey-plugin-tips">
-            suwp-a/uwp-a为子系统批量操作<br/>支持空格批量<br/>dap scm riven-pc riven-m...
+            suwp-a/uwp-a为子系统批量操作<br/>支持空格批量<br/>dap scm pc m rv riven-m...
             <i 
               style="font-size: 20px;font-weight: bold;color:red;"
-              title="riven-pc riven-m suwp-a uwp-a uwp suwp scm dap plm dms pms dms qms mms splm mps smms"
+              title="rv pc m riven-pc riven-m suwp-a uwp-a uwp suwp scm dap plm dms pms dms qms mms splm mps smms"
             >?</i>
           </i>
-          <input class="monkey-plugin-input" placeholder="suwp-a/uwp-a(默认)/单(多)个系统名" />
+          <input class="monkey-plugin-input" value="rv" placeholder="suwp-a/uwp-a(默认)/单(多)个系统名" />
           <ul>
             <button val="test">测试jenkins</button>
+            <button val="pre">预发布jenkins</button>
             <button val="prod">正式jenkins</button>
             <button val="gitlab">gitlab发master</button>
           </ul>
@@ -102,6 +103,7 @@
 
         var JenkinsBase = "https://jenkins.opsfun.com/job/"
         var gitlabBlBase = "https://git.opsfun.com/bl_supply_chain/"
+        var isGitlab = $(target).attr("val").includes("gitlab")
 
         function searchSystem(systems, type) {
           var system = systems.filter((item) => item.includes(`-${type}-`))
@@ -111,6 +113,9 @@
           return system || []
         }
         function jenkins(systems, systemType) {
+          if ($(target).attr("val") == "pre")
+            return alert("暂不支持此系统预发布环境")
+
           var prod = $(target).attr("val").includes("prod")
           systems = systemType ? searchSystem(systems, systemType) : systems
           systems
@@ -131,7 +136,30 @@
             .map((item) => gitlabBlBase + item + "/compare/master...master")
             .forEach((u) => window.open(u))
         }
-        var isGitlab = $(target).attr("val").includes("gitlab")
+
+        // 获取riven商城的jenkins
+        function getRivenJkOrWh(clientType = "riven-pc") {
+          // git仓库合并
+          const gitMerge =
+            "https://git.opsfun.com/blushmark-front/riven-blush-mark/compare/develop...develop"
+          // jenkins
+          const jenkins = {
+            "riven-pc": {
+              test: "https://j.opsfun.com/view/BM-FT/job/BL-riven-pc-test.dev/build?delay=0sec",
+              pre: "https://j.opsfun.com/view/BL-M/job/BL-M-P-qa-prod.dev/build?delay=0sec",
+              prod: "https://j.opsfun.com/view/BL-PC/job/BL-PC-Switch-qa-prod.dev/build?delay=0sec",
+            },
+            "riven-m": {
+              test: "https://j.opsfun.com/view/BM-FT/job/BL-riven-m-test.dev/build?delay=0sec",
+              pre: "https://j.opsfun.com/view/BL-M/job/BL-PC-P-qa-prod.dev/build?delay=0sec",
+              prod: "https://j.opsfun.com/view/BL-M/job/BL-M-Switch-qa-prod.dev/build?delay=0sec",
+            },
+          }
+          return isGitlab
+            ? gitMerge
+            : jenkins[clientType][$(target).attr("val")]
+        }
+
         switch (type) {
           case "uwp-a":
             isGitlab ? gitLab(uwpSystems) : jenkins(uwpSystems)
@@ -150,24 +178,18 @@
             window.open(isGitlab ? gitlabUrl : jenkinUrl)
             break
           case "riven-pc":
-            // blushmark PC端商城专门处理
-            const gitlabUrlPc =
-              "https://git.opsfun.com/blushmark-front/riven-blush-mark/compare/develop...develop"
-            const prodPc = $(target).attr("val").includes("prod")
-            const jenkinUrlPc = prodPc
-              ? "https://j.opsfun.com/view/BL-PC/job/BL-PC-Switch-qa-prod.dev/build?delay=0sec"
-              : "https://j.opsfun.com/view/BM-FT/job/BL-riven-pc-test.dev/build?delay=0sec"
-            window.open(isGitlab ? gitlabUrlPc : jenkinUrlPc)
-            break
           case "riven-m":
-            // blushmark 手机端商城专门处理
-            const gitlabUrlM =
-              "https://git.opsfun.com/blushmark-front/riven-blush-mark/compare/develop...develop"
-            const prodM = $(target).attr("val").includes("prod")
-            const jenkinUrlM = prodM
-              ? "https://j.opsfun.com/view/BL-M/job/BL-M-Switch-qa-prod.dev/build?delay=0sec"
-              : "https://j.opsfun.com/view/BM-FT/job/BL-riven-m-test.dev/build?delay=0sec"
-            window.open(isGitlab ? gitlabUrlM : jenkinUrlM)
+          case "m":
+          case "pc":
+            type == "m" && (type = "riven-m")
+            type == "pc" && (type = "riven-pc")
+            // blushmark 商城专门处理
+            window.open(getRivenJkOrWh(type))
+            break
+          case "rv":
+            // blushmark 简写处理
+            window.open(getRivenJkOrWh("riven-pc"))
+            window.open(getRivenJkOrWh("riven-m"))
             break
           default:
             const Sys = [...uwpSystems, ...suwpSystems]
@@ -198,7 +220,7 @@
             .addClass("close")
             .on("transitionend", function () {
               localStorage.setItem("monkey-plugin-hide", 1)
-              self.addClass("monkey-plugin-entry").text("open")
+              self.addClass("monkey-plugin-entry").text("o")
             })
         }
       })
