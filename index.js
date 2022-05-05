@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MC方便B端系统发版的快捷小工具
 // @namespace    http://tampermonkey.net/
-// @version      0.2.8
+// @version      0.2.9
 // @description  支持批量打开uwp和suwp子系统的jenkins与gitlab, 也支持空格批量打开多个单系统dap scm...的jenkins/gitlab
 // @author       mrzou
 // @match        https://bl-sc-pms-t-1.digi800.com/#/index
@@ -57,9 +57,9 @@
                     top: 0;right: 0;width: 14px;height: 14px;display:flex;align-items:center;justify-content: center;
                   }
                   .monkey-plugin-warp ul span {display:flex;align-items:flex-end;}
-                  .monkey-plugin-warp ul span button {margin-right:0;border-right:0;min-width: 45px;}
-                  .monkey-plugin-warp ul span input {width:40px;height: 23px;text-indent:0;text-align:center;}
-                  .monkey-plugin-warp ul p {margin: 8px 0 3px;padding:0;width:100%;text-indent:8px;font-size: 14px;color:green;}
+                  .monkey-plugin-warp ul span button {margin-right:0;border-right:0;min-width:45px;height:25px;}
+                  .monkey-plugin-warp ul span input {width:40px;height:25px;text-indent:0;text-align:center;font-size:12px;}
+                  .monkey-plugin-warp ul p {margin: 8px 0 3px;padding:0;width:100%;text-indent:8px;font-size:14px;color:green;}
               </style>
               `
         return (
