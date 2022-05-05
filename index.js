@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         MC方便B端系统发版的快捷小工具
 // @namespace    http://tampermonkey.net/
-// @version      0.2.7
+// @version      0.2.8
 // @description  支持批量打开uwp和suwp子系统的jenkins与gitlab, 也支持空格批量打开多个单系统dap scm...的jenkins/gitlab
 // @author       mrzou
 // @match        https://bl-sc-pms-t-1.digi800.com/#/index
 // @icon         https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80
 // @include      *://bl-**.digi800.com/*
 // @include      **.digi800.com/*
+// @include      **.blushmark.com/*
 // @include      http://localhost**
 // @include      http://**.**.**.**:**/**
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js
@@ -25,7 +26,7 @@
         var style = `
               <style>
                   .monkey-plugin-warp{
-                    width: 240px;height: auto;background: rgba(0,0,0,0.3);
+                    width: 250px;height: auto;background: rgba(0,0,0,0.3);
                     font-size: 14px;color: #333;text-align: center;position: fixed;z-index: 9999999999;
                     top: 10%;right: 10%;marin: 0;padding: 0;user-select: none;transition: all 0.3s;
                   }
@@ -41,7 +42,7 @@
                   }
                   .monkey-plugin-warp ul button {
                     padding: 2px;margin: 5px 5px 0;cursor: pointer;background: #fff;
-                    border: 1px solid #333;border-radius: 3px;
+                    border: 1px solid #333;border-radius: 0;
                   }
                   .monkey-plugin-warp input{
                     marin: 0;padding: 0;width: 100%;border: 1px solid #333;
@@ -55,6 +56,10 @@
                   .monkey-plugin-entry{
                     top: 0;right: 0;width: 14px;height: 14px;display:flex;align-items:center;justify-content: center;
                   }
+                  .monkey-plugin-warp ul span {display:flex;align-items:flex-end;}
+                  .monkey-plugin-warp ul span button {margin-right:0;border-right:0;min-width: 45px;}
+                  .monkey-plugin-warp ul span input {width:40px;height: 23px;text-indent:0;text-align:center;}
+                  .monkey-plugin-warp ul p {margin: 8px 0 3px;padding:0;width:100%;text-indent:8px;font-size: 14px;color:green;}
               </style>
               `
         return (
@@ -78,6 +83,11 @@
             <button val="pre">预发布jenkins</button>
             <button val="prod">正式jenkins</button>
             <button val="gitlab">gitlab发master</button>
+
+            <p>商城线上预览地址</p>
+            <span><button val="cspage">测试</button><input value="1" placeholder="env id"/></span>
+            <span><button val="yfbpage">预发布</button><input value="1" placeholder="env id"/></span>
+            <span><button val="zspage">正式</button></span>
           </ul>
         </div>
       </div>`
@@ -105,6 +115,10 @@
         var gitlabBlBase = "https://git.opsfun.com/bl_supply_chain/"
         var isGitlab = $(target).attr("val").includes("gitlab")
 
+        var isReturn =
+          $(target).attr("val") == "pre" ||
+          $(target).attr("val").includes("page")
+
         function searchSystem(systems, type) {
           var system = systems.filter((item) => item.includes(`-${type}-`))
           if (!system.length) {
@@ -113,8 +127,13 @@
           return system || []
         }
         function jenkins(systems, systemType) {
-          if ($(target).attr("val") == "pre")
-            return alert("暂不支持此系统预发布环境")
+          // if ($(target).attr("val") == "pre")
+          //   return alert("暂不支持此系统预发布环境")
+
+          // if ($(target).attr("val").includes("page"))
+          //   return alert("暂不支持此系统")
+
+          if (isReturn) return alert("暂不支持此系统")
 
           var prod = $(target).attr("val").includes("prod")
           systems = systemType ? searchSystem(systems, systemType) : systems
@@ -139,20 +158,33 @@
 
         // 获取riven商城的jenkins
         function getRivenJkOrWh(clientType = "riven-pc") {
+          // cspage  yfbpage  zspage
           // git仓库合并
           const gitMerge =
             "https://git.opsfun.com/blushmark-front/riven-blush-mark/compare/develop...develop"
+
+          const envNum = $(target).parent().find("input").val() || 1
+          const yfbNum = envNum > 1 ? envNum : ""
+          // 打印 2、3 环境的登录用户帐号
+          console.log("%cname: lebbay\npassword: passw0rd", "color: green")
+
           // jenkins
           const jenkins = {
             "riven-pc": {
               test: "https://j.opsfun.com/view/BM-FT/job/BL-riven-pc-test.dev/build?delay=0sec",
               pre: "https://j.opsfun.com/view/BL-M/job/BL-M-P-qa-prod.dev/build?delay=0sec",
               prod: "https://j.opsfun.com/view/BL-PC/job/BL-PC-Switch-qa-prod.dev/build?delay=0sec",
+              cspage: `https://ft${envNum}-us.blushmark.com/`,
+              yfbpage: `https://p${yfbNum}-us.blushmark.com/`,
+              zspage: `https://us.blushmark.com/`,
             },
             "riven-m": {
               test: "https://j.opsfun.com/view/BM-FT/job/BL-riven-m-test.dev/build?delay=0sec",
               pre: "https://j.opsfun.com/view/BL-M/job/BL-PC-P-qa-prod.dev/build?delay=0sec",
               prod: "https://j.opsfun.com/view/BL-M/job/BL-M-Switch-qa-prod.dev/build?delay=0sec",
+              cspage: `https://mt${envNum}.blushmark.com/us/`,
+              yfbpage: `https://mp${yfbNum}.blushmark.com/us/`,
+              zspage: `https://m.blushmark.com/us/`,
             },
           }
           return isGitlab
@@ -168,6 +200,7 @@
             isGitlab ? gitLab(suwpSystems) : jenkins(suwpSystems)
             break
           case "scm":
+            if (isReturn) return alert("暂不支持此系统")
             // scm有差异得专门处理
             const gitlabUrl =
               "https://git.opsfun.com/bl-backend/scm/compare/master...master"
