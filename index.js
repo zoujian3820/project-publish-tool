@@ -1,6 +1,5 @@
 // ==UserScript==
 // @name         MC方便B端系统发版的快捷小工具
-// @namespace 	 mrzou_mc_bl
 // @version      0.3.2
 // @description  支持批量打开 blushMark商城和uwp和suwp子系统的jenkins与gitlab, 也支持空格批量打开多个单系统dap scm...的jenkins/gitlab
 // @author       mrzou
@@ -16,7 +15,7 @@
 // @grant        none
 // @run-at document-end
 
-// @updateURL   https://git.opsfun.com/qingyun/project-publish-tool/src/branch/main/index.js
+// @updateURL   https://git.opsfun.com/qingyun/project-publish-tool/raw/branch/main/index.js
 
 // ==/UserScript==
 
