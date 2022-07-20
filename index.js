@@ -14,7 +14,10 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js
 // @license MIT
 // @grant        none
+// @run-at document-end
+
 // @updateURL   https://git.opsfun.com/qingyun/project-publish-tool/src/branch/main/index.js
+
 // ==/UserScript==
 
 ;(function () {
