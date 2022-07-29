@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MC方便B端系统发版的快捷小工具
-// @version      0.3.3
+// @version      0.3.4
 // @description  支持批量打开 blushMark商城和uwp和suwp子系统的jenkins与gitlab, 也支持空格批量打开多个单系统dap scm...的jenkins/gitlab
 // @author       mrzou
 // @match        https://bl-sc-pms-t-1.digi800.com/#/index
@@ -10,6 +10,7 @@
 // @include      **.blushmark.com/*
 // @include      http://localhost**
 // @include      http://**.**.**.**:**/**
+// @include      *
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js
 // @license MIT
 // @grant        none
@@ -57,6 +58,7 @@
                   }
                   .monkey-plugin-entry{
                     top: 0;right: 0;width: 14px;height: 14px;display:flex;align-items:center;justify-content: center;
+                    opacity: 0.3;
                   }
                   .monkey-plugin-warp ul span {display:flex;align-items:flex-end;}
                   .monkey-plugin-warp ul span button {margin-right:0;border-right:0;min-width:45px;height:25px;}
@@ -97,7 +99,7 @@
       }
 
       function handler(type, target) {
-        var uwpSystems = [
+        const uwpSystems = [
           "bl-pms-front-end",
           "bl-dap-front-end",
           "bl-plm-front-end",
@@ -106,20 +108,25 @@
           "bl-mms-front-end",
           "bl-uwp-front-end",
         ]
-        var suwpSystems = [
+        const suwpSystems = [
           "bl-suwp-front-end",
           "bl-mps-front-end",
           "bl-splm-front-end",
           "bl-smms-front-end",
         ]
 
-        var JenkinsBase = "https://jenkins.opsfun.com/job/"
-        var gitlabBlBase = "https://git.opsfun.com/bl_supply_chain/"
-        var isGitlab = $(target).attr("val").includes("gitlab")
+        const JenkinsBase = "https://jenkins.opsfun.com/job/"
+        const gitlabBlBase = "https://git.opsfun.com/bl_supply_chain/"
+        const gtilabBlBase02 = "https://git.opsfun.com/bl-backend/"
 
-        var isReturn =
-          $(target).attr("val") == "pre" ||
-          $(target).attr("val").includes("page")
+        const buttonIptVal = $(target).attr("val")
+        const isGitlab = buttonIptVal.includes("gitlab")
+        const isProd = buttonIptVal.includes("prod")
+        const isPre = buttonIptVal.includes("pre")
+        const isPage = buttonIptVal.includes("page")
+        // const isTest = buttonIptVal.includes("test")
+
+        var isNoSupportPreAndPage = isPre || isPage
 
         function searchSystem(systems, type) {
           var system = systems.filter((item) => item.includes(`-${type}-`))
@@ -129,15 +136,9 @@
           return system || []
         }
         function jenkins(systems, systemType) {
-          // if ($(target).attr("val") == "pre")
-          //   return alert("暂不支持此系统预发布环境")
+          if (isNoSupportPreAndPage) return alert("暂不支持此系统")
 
-          // if ($(target).attr("val").includes("page"))
-          //   return alert("暂不支持此系统")
-
-          if (isReturn) return alert("暂不支持此系统")
-
-          var prod = $(target).attr("val").includes("prod")
+          var prod = buttonIptVal.includes("prod")
           systems = systemType ? searchSystem(systems, systemType) : systems
           systems
             .map((item) => {
@@ -160,7 +161,6 @@
 
         // 获取riven商城的jenkins
         function getRivenJkOrWh(clientType = "riven-pc") {
-          // cspage  yfbpage  zspage
           // git仓库合并
           const gitMerge =
             "https://git.opsfun.com/blushmark-front/riven-blush-mark/compare/develop...develop"
@@ -189,15 +189,12 @@
               zspage: `https://m.blushmark.com/us/`,
             },
           }
-          const URL = isGitlab
-            ? gitMerge
-            : jenkins[clientType][$(target).attr("val")]
+          const URL = isGitlab ? gitMerge : jenkins[clientType][buttonIptVal]
 
           console.log(`%c跳转地址: ${URL}`, "color:#fd6327")
 
           return URL
         }
-
         switch (type) {
           case "uwp-a":
             isGitlab ? gitLab(uwpSystems) : jenkins(uwpSystems)
@@ -205,16 +202,48 @@
           case "suwp-a":
             isGitlab ? gitLab(suwpSystems) : jenkins(suwpSystems)
             break
+          case "pangu":
+            const pgjKbaseurl = "https://j.opsfun.com/view/BL-PG/job/"
+            const pgGitlabUrl =
+              gtilabBlBase02 + "pangu-web/compare/master...master"
+            const pgJenkinUrl = isProd
+              ? "BL-PG-WEB-qa-prod.dev/"
+              : isPre
+              ? "BL-PG-WEB-qa-pre.dev/"
+              : "BL-PG-WEB-new-test.dev/"
+
+            const pgViewConf = {
+              cspage: "https://ft.bl-pangu.opsfun.com/#/dashboard",
+              yfbpage: "",
+              zspage: "https://pangu.opsfun.com/#/dashboard",
+            }
+
+            if (isPage) {
+              const vUrl = pgViewConf[buttonIptVal]
+              vUrl ? window.open(vUrl) : alert("暂不支持")
+            } else {
+              window.open(isGitlab ? pgGitlabUrl : pgjKbaseurl + pgJenkinUrl)
+            }
+            break
           case "scm":
-            if (isReturn) return alert("暂不支持此系统")
             // scm有差异得专门处理
-            const gitlabUrl =
-              "https://git.opsfun.com/bl-backend/scm/compare/master...master"
-            const prod = $(target).attr("val").includes("prod")
-            const jenkinUrl = prod
+            const gitlabUrl = gtilabBlBase02 + "scm/compare/master...master"
+            const jenkinUrl = isProd
               ? "https://j.opsfun.com/job/BL-SCM-web-qa-prod.dev/build?delay=0sec"
               : "https://j.opsfun.com/view/BL-SCM/job/BL-SCM-web-new-test.dev/build?delay=0sec"
-            window.open(isGitlab ? gitlabUrl : jenkinUrl)
+
+            const scmViewConf = {
+              cspage: "https://blscm-test2.digi800.com/#/style",
+              yfbpage: "",
+              zspage: "https://blscm.digi800.com/#/style",
+            }
+
+            if (isPage) {
+              const vUrl = scmViewConf[buttonIptVal]
+              vUrl ? window.open(vUrl) : alert("暂不支持")
+            } else {
+              window.open(isGitlab ? gitlabUrl : jenkinUrl)
+            }
             break
           case "riven-pc":
           case "riven-m":
