@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MC方便B端系统发版的快捷小工具
-// @version      0.3.5
+// @version      0.3.6
 // @description  支持批量打开 blushMark商城和uwp和suwp子系统的jenkins与gitlab, 也支持空格批量打开多个单系统dap scm...的jenkins/gitlab
 // @author       mrzou
 // @match        https://bl-sc-pms-t-1.digi800.com/#/index
@@ -12,6 +12,7 @@
 // @include      http://**.**.**.**:**/**
 // @include      *
 // @exclude      *://j.opsfun.com/*
+// @exclude      *://jenkins.opsfun.com/*
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js
 // @license MIT
 // @grant        none
@@ -214,7 +215,7 @@
               : "BL-PG-WEB-new-test.dev/"
 
             const pgViewConf = {
-              cspage: "https://ft.bl-pangu.opsfun.com/#/dashboard",
+              cspage: "http://ft.bl-pangu.opsfun.com/#/dashboard",
               yfbpage: "",
               zspage: "https://pangu.opsfun.com/#/dashboard",
             }
