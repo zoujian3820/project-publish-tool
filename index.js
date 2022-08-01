@@ -178,7 +178,7 @@
           const jenkins = {
             "riven-pc": {
               test: "https://j.opsfun.com/view/BM-FT/job/BL-riven-pc-test.dev/build?delay=0sec",
-              pre: "https://j.opsfun.com/view/BL-M/job/BL-M-P-qa-prod.dev/build?delay=0sec",
+              pre: "https://j.opsfun.com/view/BL-M/job/BL-PC-P-qa-prod.dev/build?delay=0sec",
               prod: "https://j.opsfun.com/view/BL-PC/job/BL-PC-Switch-qa-prod.dev/build?delay=0sec",
               cspage: `https://ft${envNum}-us.blushmark.com/`,
               yfbpage: `https://p${yfbNum}-us.blushmark.com/`,
@@ -186,7 +186,7 @@
             },
             "riven-m": {
               test: "https://j.opsfun.com/view/BM-FT/job/BL-riven-m-test.dev/build?delay=0sec",
-              pre: "https://j.opsfun.com/view/BL-M/job/BL-PC-P-qa-prod.dev/build?delay=0sec",
+              pre: "https://j.opsfun.com/view/BL-M/job/BL-M-P-qa-prod.dev/build?delay=0sec",
               prod: "https://j.opsfun.com/view/BL-M/job/BL-M-Switch-qa-prod.dev/build?delay=0sec",
               cspage: `https://mt${envNum}.blushmark.com/us/`,
               yfbpage: `https://mp${yfbNum}.blushmark.com/us/`,
