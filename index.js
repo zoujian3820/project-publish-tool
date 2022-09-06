@@ -113,7 +113,8 @@
           'bl-dms-front-end',
           'bl-qms-front-end',
           'bl-mms-front-end',
-          'bl-uwp-front-end'
+          'bl-uwp-front-end',
+          'bl-fms-front-end'
         ]
         const suwpSystems = [
           'bl-suwp-front-end',
@@ -126,6 +127,7 @@
         const gitlabBlBase = 'https://git.opsfun.com/bl_supply_chain/'
         const gtilabBlBase02 = 'https://git.opsfun.com/bl-backend/'
         const gtilabBlBase03 = 'https://git.opsfun.com/blushmark-front/'
+        const gitlabBlBaseFms = 'https://git.opsfun.com/bl-finance/'
 
         const buttonIptVal = $(target).attr('val')
         const isGitlab = buttonIptVal.includes('gitlab')
@@ -159,11 +161,17 @@
             })
             .forEach(u => window.open(u))
         }
+
+        function getGitlabBase(item) {
+          const base = item.includes('fms') ? gitlabBlBaseFms : gitlabBlBase
+          return base + item
+        }
+
         function gitLab (systems, systemType) {
           //return gitlabBlBase + item + '/compare/master...feature/qingyun/6666_layout'
           systems = systemType ? searchSystem(systems, systemType) : systems
           systems
-            .map(item => gitlabBlBase + item + '/compare/master...master')
+            .map(item => getGitlabBase(item) + '/compare/master...master')
             .forEach(u => window.open(u))
         }
 
@@ -214,6 +222,12 @@
 
         function OpenUwpPageView (type) {
           const Config = {
+            fms: {
+              kfpage: 'https://fms-dev-1.digi800.com/',
+              cspage: 'https://fms-test-1.digi800.com/',
+              yfbpage: '',
+              zspage: 'https://bl-fms.digi800.com/'
+            },
             dap: {
               cspage: 'https://bl-sc-dap-t-1.digi800.com/',
               yfbpage: 'https://bl-dap-p.digi800.com/',
