@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MC方便B端系统发版的快捷小工具
-// @version      0.3.11
+// @version      0.3.12
 // @description  支持批量打开 blushMark商城和uwp和suwp子系统的jenkins与gitlab, 也支持空格批量打开多个单系统dap scm...的jenkins/gitlab
 // @author       mrzou
 // @match        https://bl-sc-pms-t-1.digi800.com/#/index
@@ -162,7 +162,7 @@
             .forEach(u => window.open(u))
         }
 
-        function getGitlabBase(item) {
+        function getGitlabBase (item) {
           const base = item.includes('fms') ? gitlabBlBaseFms : gitlabBlBase
           return base + item
         }
@@ -302,6 +302,33 @@
               vUrl ? window.open(vUrl) : alert('暂不支持')
             } else {
               window.open(isGitlab ? cxGitlabUrl : cxjKbaseurl + cxJenkinUrl)
+            }
+            break
+          case 'legao':
+            const legaojKbaseurl = 'https://j.opsfun.com/view/'
+            const legaoGitlabUrl =
+              gtilabBlBase03 +
+              'blush-mark-lego-dashboard/compare/develop...develop'
+            const legaoJenkinUrl = isProd
+              ? 'BM-PROD/job/BL-lego-web-qa-prod.dev/'
+              : isPre
+              ? 'BM-PROD/job/BL-lego-web-qa-pre.dev/'
+              : 'BM-FT/job/BL-lego-web-test.dev/'
+
+            const legaoViewConf = {
+              cspage: 'https://lego-t-1.blushmark.com/#/',
+              yfbpage: 'https://lego-pre.nukaka.com/#/',
+              zspage: 'https://lego.nukaka.com/#/'
+            }
+
+            if (isPage) {
+              const vUrl = legaoViewConf[buttonIptVal]
+              vUrl ? window.open(vUrl) : alert('暂不支持')
+              console.log('%c测试环境账号： yzhang 密码：lb123456', 'color: green')
+            } else {
+              window.open(
+                isGitlab ? legaoGitlabUrl : legaojKbaseurl + legaoJenkinUrl
+              )
             }
             break
           case 'pangu':
