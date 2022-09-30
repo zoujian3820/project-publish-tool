@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MC方便B端系统发版的快捷小工具
-// @version      0.3.12
+// @version      0.3.13
 // @description  支持批量打开 blushMark商城和uwp和suwp子系统的jenkins与gitlab, 也支持空格批量打开多个单系统dap scm...的jenkins/gitlab
 // @author       mrzou
 // @match        https://bl-sc-pms-t-1.digi800.com/#/index
@@ -267,10 +267,15 @@
               cspage: 'https://bl-sc-uwp-t-1.digi800.com/',
               yfbpage: 'https://bl-uwp-p.digi800.com/',
               zspage: 'https://bl-uwp.digi800.com/'
+            },
+            mps: {
+              kfpage: 'https://dev-bl-sc-mps.digi800.com/',
+              cspage: 'https://bl-sc-mps-t-1.digi800.com/',
+              yfbpage: 'https://bl-bmps-p.digi800.com/',
+              zspage: 'https://bl-bmps.digi800.com/'
             }
           }
-
-          const vUrl = Config[type][buttonIptVal]
+          const vUrl = Config[type] && Config[type][buttonIptVal]
           vUrl ? window.open(vUrl) : alert('暂不支持')
         }
 
